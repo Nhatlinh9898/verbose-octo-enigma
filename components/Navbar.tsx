@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Search, ShoppingCart, User as UserIcon, MapPin, Gavel, LayoutGrid, PlusCircle, Package, Video, Sparkles, Zap, BarChart3, Shield, Bot, BrainCircuit, Palette } from 'lucide-react';
+import { Search, ShoppingCart, User as UserIcon, MapPin, Gavel, LayoutGrid, PlusCircle, Package, Video, Sparkles, Zap, BarChart3, Shield, Bot, BrainCircuit, Palette, Upload } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 interface NavbarProps {
@@ -21,11 +21,12 @@ interface NavbarProps {
   onOpenAvatarStudio: () => void;
   onOpenKOLStudio: () => void;
   onOpenColorCustomizer: () => void;
+  onOpenUploadPage: () => void;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ 
   cartCount, onSearch, openCart, openSellModal, openOrders, 
-  onOpenLiveStudio, onViewLiveStreams, onOpenAuth, onOpenProfile, onOpenCustomerService, onOpenContentStudio, onOpenSuperDeals, onOpenSellerDashboard, onOpenAdminDashboard, onOpenAvatarStudio, onOpenKOLStudio, onOpenColorCustomizer
+  onOpenLiveStudio, onViewLiveStreams, onOpenAuth, onOpenProfile, onOpenCustomerService, onOpenContentStudio, onOpenSuperDeals, onOpenSellerDashboard, onOpenAdminDashboard, onOpenAvatarStudio, onOpenKOLStudio, onOpenColorCustomizer, onOpenUploadPage
 }) => {
   const { user } = useAuth();
 
@@ -100,6 +101,9 @@ const Navbar: React.FC<NavbarProps> = ({
         </span>
         <span onClick={onOpenColorCustomizer} className="flex items-center gap-1 text-yellow-300">
             <Palette size={14} /> Màu & Tương phản
+        </span>
+        <span onClick={onOpenUploadPage} className="flex items-center gap-1 text-orange-300">
+            <Upload size={14} /> Upload
         </span>
         <span onClick={onOpenCustomerService}>Hỗ trợ</span>
       </div>

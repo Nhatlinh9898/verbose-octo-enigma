@@ -101,17 +101,18 @@ export const generateProductVideo = async (prompt: string) => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   try {
     let operation = await ai.models.generateVideos({
-      model: 'veo-3.1-fast-generate-preview',
+      model: 'veo-3.1-generate-preview',
       prompt: prompt,
       config: {
-        numberOfVideos: 1,
-        resolution: '720p',
-        aspectRatio: '16:9'
+        aspectRatio: '16:9',
+        resolution: '720p'
       }
     });
+    
+    // Wait for operation to complete
     while (!operation.done) {
       await new Promise(resolve => setTimeout(resolve, 10000));
-      operation = await ai.operations.getVideosOperation({operation: operation});
+      operation = await ai.operations.get({ operation: operation });
     }
 
     const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;

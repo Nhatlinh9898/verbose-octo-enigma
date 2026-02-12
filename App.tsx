@@ -19,6 +19,7 @@ import KOLCreatorStudio from './components/KOLCreatorStudio';
 import VirtualAvatarStudio from './components/VirtualAvatarStudio'; // Import trực tiếp
 import CartModal from './components/CartModal';
 import ColorCustomizer from './components/ColorCustomizer';
+import UploadPage from './pages/UploadPage';
 import { AuthProvider, useAuth } from './context/AuthContext'; 
 
 import { MOCK_PRODUCTS, MOCK_STREAMS } from './data';
@@ -51,6 +52,7 @@ const InnerApp: React.FC = () => {
   const [isAvatarStudioOpen, setIsAvatarStudioOpen] = useState(false);
   const [isKOLStudioOpen, setIsKOLStudioOpen] = useState(false);
   const [isColorCustomizerOpen, setIsColorCustomizerOpen] = useState(false);
+  const [isUploadPageOpen, setIsUploadPageOpen] = useState(false);
   const [customColors, setCustomColors] = useState({ backgroundColor: '#ffffff', textColor: '#000000' });
 
   const [activeStream, setActiveStream] = useState<LiveStream | null>(null);
@@ -162,25 +164,30 @@ const InnerApp: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-20" style={{ backgroundColor: customColors.backgroundColor, color: customColors.textColor }}>
-      <Navbar 
-        cartCount={cart.reduce((s, i) => s + i.quantity, 0)} 
-        onSearch={setSearchTerm}
-        openCart={() => setIsCartOpen(true)}
-        openSellModal={() => setIsSellModalOpen(true)}
-        openOrders={() => setIsOrderDashboardOpen(true)}
-        onOpenLiveStudio={() => user ? setIsCreateStreamModalOpen(true) : setIsAuthModalOpen(true)}
-        onViewLiveStreams={() => setShowLiveList(!showLiveList)}
-        onOpenAuth={() => setIsAuthModalOpen(true)}
-        onOpenProfile={() => setIsProfileOpen(true)}
-        onOpenCustomerService={() => setIsCustomerServiceOpen(true)}
-        onOpenContentStudio={() => setIsContentStudioOpen(true)}
-        onOpenSuperDeals={() => setIsSuperDealsOpen(true)}
-        onOpenSellerDashboard={() => setIsSellerDashboardOpen(true)}
-        onOpenAdminDashboard={() => setIsAdminDashboardOpen(true)}
-        onOpenAvatarStudio={() => setIsAvatarStudioOpen(true)}
-        onOpenKOLStudio={() => setIsKOLStudioOpen(true)}
-        onOpenColorCustomizer={() => setIsColorCustomizerOpen(true)}
-      />
+      {isUploadPageOpen ? (
+        <UploadPage onBack={() => setIsUploadPageOpen(false)} />
+      ) : (
+        <>
+          <Navbar 
+            cartCount={cart.reduce((s, i) => s + i.quantity, 0)} 
+            onSearch={setSearchTerm}
+            openCart={() => setIsCartOpen(true)}
+            openSellModal={() => setIsSellModalOpen(true)}
+            openOrders={() => setIsOrderDashboardOpen(true)}
+            onOpenLiveStudio={() => user ? setIsCreateStreamModalOpen(true) : setIsAuthModalOpen(true)}
+            onViewLiveStreams={() => setShowLiveList(!showLiveList)}
+            onOpenAuth={() => setIsAuthModalOpen(true)}
+            onOpenProfile={() => setIsProfileOpen(true)}
+            onOpenCustomerService={() => setIsCustomerServiceOpen(true)}
+            onOpenContentStudio={() => setIsContentStudioOpen(true)}
+            onOpenSuperDeals={() => setIsSuperDealsOpen(true)}
+            onOpenSellerDashboard={() => setIsSellerDashboardOpen(true)}
+            onOpenAdminDashboard={() => setIsAdminDashboardOpen(true)}
+            onOpenAvatarStudio={() => setIsAvatarStudioOpen(true)}
+            onOpenKOLStudio={() => setIsKOLStudioOpen(true)}
+            onOpenColorCustomizer={() => setIsColorCustomizerOpen(true)}
+            onOpenUploadPage={() => setIsUploadPageOpen(true)}
+          />
 
       <main className="max-w-[1500px] mx-auto px-4 py-6">
         {showLiveList && (
@@ -279,6 +286,8 @@ const InnerApp: React.FC = () => {
       )}
 
       <GeminiAssistant products={products} />
+        </>
+      )}
     </div>
   );
 };
