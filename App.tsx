@@ -53,6 +53,7 @@ const InnerApp: React.FC = () => {
   const [isKOLStudioOpen, setIsKOLStudioOpen] = useState(false);
   const [isColorCustomizerOpen, setIsColorCustomizerOpen] = useState(false);
   const [isUploadPageOpen, setIsUploadPageOpen] = useState(false);
+  const [selectedLogo, setSelectedLogo] = useState<string>('');
   const [customColors, setCustomColors] = useState({ backgroundColor: '#ffffff', textColor: '#000000' });
 
   const [activeStream, setActiveStream] = useState<LiveStream | null>(null);
@@ -146,6 +147,11 @@ const InnerApp: React.FC = () => {
       showNotification('Đã áp dụng màu tùy chỉnh!');
   };
 
+  const handleLogoSelect = (logoUrl: string) => {
+      setSelectedLogo(logoUrl);
+      showNotification('Đã chọn logo mới!');
+  };
+
   const handleCreateStream = (streamData: Partial<LiveStream>) => {
     if (!user) return;
     const newStream = { ...streamData, hostName: user.fullName, hostAvatar: user.avatar } as LiveStream;
@@ -187,6 +193,7 @@ const InnerApp: React.FC = () => {
             onOpenKOLStudio={() => setIsKOLStudioOpen(true)}
             onOpenColorCustomizer={() => setIsColorCustomizerOpen(true)}
             onOpenUploadPage={() => setIsUploadPageOpen(true)}
+            selectedLogo={selectedLogo}
           />
 
       <main className="max-w-[1500px] mx-auto px-4 py-6">
@@ -275,7 +282,8 @@ const InnerApp: React.FC = () => {
       <ColorCustomizer 
         isOpen={isColorCustomizerOpen} 
         onClose={() => setIsColorCustomizerOpen(false)} 
-        onApplyColors={handleApplyColors} 
+        onApplyColors={handleApplyColors}
+        onLogoSelect={handleLogoSelect}
       />
 
       {notification && (

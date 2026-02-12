@@ -19,6 +19,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const dealsRoutes = require('./routes/dealsRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const biddingRoutes = require('./routes/biddingRoutes');
+const logoRoutes = require('./routes/logoRoutes');
 
 // Connect to database
 connectDB();
@@ -57,6 +58,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/deals', dealsRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/bidding', biddingRoutes);
+app.use('/api/logos', logoRoutes);
 
 // Socket.io logic for real-time bidding and live streaming
 io.on('connection', (socket) => {

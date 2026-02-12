@@ -1,21 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { Palette, Eye, EyeOff, RefreshCw, Check, Contrast, Sliders } from 'lucide-react';
+import LogoSelector from './LogoSelector';
 
 interface ColorCustomizerProps {
   isOpen: boolean;
   onClose: () => void;
   onApplyColors: (backgroundColor: string, textColor: string) => void;
+  onLogoSelect?: (logoUrl: string) => void;
 }
 
 const ColorCustomizer: React.FC<ColorCustomizerProps> = ({ 
   isOpen, 
   onClose, 
-  onApplyColors 
+  onApplyColors,
+  onLogoSelect
 }) => {
   const [backgroundColor, setBackgroundColor] = useState('#ffffff');
   const [textColor, setTextColor] = useState('#000000');
   const [showPreview, setShowPreview] = useState(true);
   const [intensity, setIntensity] = useState(100); // New intensity slider
+  const [selectedLogo, setSelectedLogo] = useState<string>('');
   
   // High contrast presets
   const highContrastPresets = [
@@ -260,6 +264,15 @@ const ColorCustomizer: React.FC<ColorCustomizerProps> = ({
               </div>
             )}
           </div>
+
+          {/* Logo Selection */}
+          <LogoSelector 
+            selectedLogo={selectedLogo}
+            onLogoSelect={(logoUrl) => {
+              setSelectedLogo(logoUrl);
+              onLogoSelect?.(logoUrl);
+            }}
+          />
 
           {/* High Contrast Presets */}
           <div>

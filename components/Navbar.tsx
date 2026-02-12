@@ -2,6 +2,7 @@
 import React from 'react';
 import { Search, ShoppingCart, User as UserIcon, MapPin, Gavel, LayoutGrid, PlusCircle, Package, Video, Sparkles, Zap, BarChart3, Shield, Bot, BrainCircuit, Palette, Upload } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import LogoComponent from './LogoComponent';
 
 interface NavbarProps {
   cartCount: number;
@@ -22,11 +23,12 @@ interface NavbarProps {
   onOpenKOLStudio: () => void;
   onOpenColorCustomizer: () => void;
   onOpenUploadPage: () => void;
+  selectedLogo?: string;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ 
   cartCount, onSearch, openCart, openSellModal, openOrders, 
-  onOpenLiveStudio, onViewLiveStreams, onOpenAuth, onOpenProfile, onOpenCustomerService, onOpenContentStudio, onOpenSuperDeals, onOpenSellerDashboard, onOpenAdminDashboard, onOpenAvatarStudio, onOpenKOLStudio, onOpenColorCustomizer, onOpenUploadPage
+  onOpenLiveStudio, onViewLiveStreams, onOpenAuth, onOpenProfile, onOpenCustomerService, onOpenContentStudio, onOpenSuperDeals, onOpenSellerDashboard, onOpenAdminDashboard, onOpenAvatarStudio, onOpenKOLStudio, onOpenColorCustomizer, onOpenUploadPage, selectedLogo
 }) => {
   const { user } = useAuth();
 
@@ -36,6 +38,7 @@ const Navbar: React.FC<NavbarProps> = ({
       <div className="max-w-[1500px] mx-auto flex items-center p-2 gap-2 md:gap-4">
         {/* Logo */}
         <div className="flex items-center cursor-pointer p-1 shrink-0" onClick={() => window.location.reload()}>
+          <LogoComponent logoUrl={selectedLogo} />
           <span className="text-xl md:text-2xl font-bold italic flex items-center gap-1">
             <Gavel className="text-[#febd69] w-5 h-5 md:w-6 md:h-6" /> Amaze<span className="text-[#febd69]">Bid</span>
           </span>
