@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { Search, ShoppingCart, User as UserIcon, MapPin, Gavel, LayoutGrid, PlusCircle, Package, Video, Sparkles, Zap, BarChart3, Shield, Bot, BrainCircuit, Palette, Upload } from 'lucide-react';
+import React, { useState } from 'react';
+import { Search, ShoppingCart, User as UserIcon, MapPin, Gavel, LayoutGrid, PlusCircle, Package, Video, Sparkles, Zap, BarChart3, Shield, Bot, BrainCircuit, Palette, Upload, RefreshCw, Play, Pause } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import LogoComponent from './LogoComponent';
 
@@ -31,6 +31,12 @@ const Navbar: React.FC<NavbarProps> = ({
   onOpenLiveStudio, onViewLiveStreams, onOpenAuth, onOpenProfile, onOpenCustomerService, onOpenContentStudio, onOpenSuperDeals, onOpenSellerDashboard, onOpenAdminDashboard, onOpenAvatarStudio, onOpenKOLStudio, onOpenColorCustomizer, onOpenUploadPage, selectedLogo
 }) => {
   const { user } = useAuth();
+  const [logoKey, setLogoKey] = useState(0);
+  const [showLogoControls, setShowLogoControls] = useState(false);
+
+  const forceLogoRefresh = () => {
+    setLogoKey(prev => prev + 1);
+  };
 
   return (
     <header className="bg-[#131921] text-white sticky top-0 z-50 shadow-md">
@@ -38,7 +44,45 @@ const Navbar: React.FC<NavbarProps> = ({
       <div className="max-w-[1500px] mx-auto flex items-center p-2 gap-2 md:gap-4">
         {/* Logo */}
         <div className="flex items-center cursor-pointer p-1 shrink-0" onClick={() => window.location.reload()}>
-          <LogoComponent logoUrl={selectedLogo} />
+          <div className="relative">
+            <LogoComponent key={logoKey} logoUrl={selectedLogo} />
+            <div className="absolute -top-2 -right-2 flex gap-1">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowLogoControls(!showLogoControls);
+                }}
+                className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors"
+                title="Logo controls"
+              >
+                <RefreshCw size={12} className="text-white" />
+              </button>
+            </div>
+            {showLogoControls && (
+              <div className="absolute top-8 right-0 bg-gray-800 rounded-lg shadow-lg p-2 flex gap-1 z-50">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    forceLogoRefresh();
+                  }}
+                  className="w-6 h-6 bg-green-500 rounded flex items-center justify-center hover:bg-green-600 transition-colors"
+                  title="Change logo now"
+                >
+                  <RefreshCw size={14} className="text-white" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onOpenColorCustomizer();
+                  }}
+                  className="w-6 h-6 bg-purple-500 rounded flex items-center justify-center hover:bg-purple-600 transition-colors"
+                  title="Choose logo"
+                >
+                  <Palette size={14} className="text-white" />
+                </button>
+              </div>
+            )}
+          </div>
           <span className="text-xl md:text-2xl font-bold italic flex items-center gap-1">
             <Gavel className="text-[#febd69] w-5 h-5 md:w-6 md:h-6" /> Amaze<span className="text-[#febd69]">Bid</span>
           </span>
@@ -102,8 +146,11 @@ const Navbar: React.FC<NavbarProps> = ({
         <span onClick={onOpenLiveStudio} className="flex items-center gap-1">
             <Video size={14} /> Live Studio
         </span>
-        <span onClick={onOpenColorCustomizer} className="flex items-center gap-1 text-yellow-300">
-            <Palette size={14} /> Màu & Tương phản
+        <span onClick={() => forceLogoRefresh()} className="flex items-center gap-1 text-green-300">
+            <RefreshCw size={14} /> Đổi Logo
+        </span>
+        <span onClick={() => onOpenColorCustomizer()} className="flex items-center gap-1 text-cyan-300">
+            <Play size={14} /> Auto Logo
         </span>
         <span onClick={onOpenUploadPage} className="flex items-center gap-1 text-orange-300">
             <Upload size={14} /> Upload

@@ -30,7 +30,7 @@ exports.getLogos = async (req, res) => {
           extension: path.extname(file).toLowerCase(),
           size: stats.size,
           sizeFormatted: (stats.size / 1024).toFixed(2) + ' KB',
-          url: `/uploads/logos/${file}`,
+          url: `http://localhost:5000/uploads/logos/${file}`,
           createdAt: stats.birthtime,
           modifiedAt: stats.mtime
         };
@@ -75,7 +75,7 @@ exports.getLogoByName = async (req, res) => {
       extension: ext,
       size: stats.size,
       sizeFormatted: (stats.size / 1024).toFixed(2) + ' KB',
-      url: `/uploads/logos/${filename}`,
+      url: `http://localhost:5000/uploads/logos/${filename}`,
       createdAt: stats.birthtime,
       modifiedAt: stats.mtime
     });
@@ -115,7 +115,7 @@ exports.searchLogos = async (req, res) => {
           extension: path.extname(file).toLowerCase(),
           size: stats.size,
           sizeFormatted: (stats.size / 1024).toFixed(2) + ' KB',
-          url: `/uploads/logos/${file}`,
+          url: `http://localhost:5000/uploads/logos/${file}`,
           createdAt: stats.birthtime,
           modifiedAt: stats.mtime
         };
@@ -163,7 +163,7 @@ exports.getRandomLogos = async (req, res) => {
           extension: path.extname(file).toLowerCase(),
           size: stats.size,
           sizeFormatted: (stats.size / 1024).toFixed(2) + ' KB',
-          url: `/uploads/logos/${file}`,
+          url: `http://localhost:5000/uploads/logos/${file}`,
           createdAt: stats.birthtime,
           modifiedAt: stats.mtime
         };
