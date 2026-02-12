@@ -69,5 +69,49 @@ export const api = {
         method: 'POST', body: JSON.stringify({ items: cartItems })
     }),
     getMyOrders: () => fetchClient<any[]>('/orders/me'),
+  },
+
+  // Live streaming
+  liveStreams: {
+    getAll: () => fetchClient<any[]>('/livestreams'),
+    getById: (id: string) => fetchClient<any>(`/livestreams/${id}`),
+    create: (data: any) => fetchClient<any>('/livestreams', { 
+        method: 'POST', body: JSON.stringify(data) 
+    }),
+    updateStatus: (id: string, status: string) => fetchClient<any>(`/livestreams/${id}/status`, {
+        method: 'PUT', body: JSON.stringify({ status })
+    }),
+    addChatMessage: (id: string, message: string) => fetchClient<any>(`/livestreams/${id}/chat`, {
+        method: 'POST', body: JSON.stringify({ message })
+    })
+  },
+
+  // Content management
+  content: {
+    getAll: () => fetchClient<any[]>('/content'),
+    create: (data: any) => fetchClient<any>('/content', { 
+        method: 'POST', body: JSON.stringify(data) 
+    }),
+    getMyContent: () => fetchClient<any[]>('/content/me'),
+  },
+
+  // User management
+  users: {
+    updateProfile: (data: any) => fetchClient<any>('/users/profile', {
+        method: 'PUT', body: JSON.stringify(data)
+    }),
+    updateBalance: (data: any) => fetchClient<any>('/users/balance', {
+        method: 'PUT', body: JSON.stringify(data)
+    })
+  },
+
+  // AI services
+  ai: {
+    generateContent: (prompt: string) => fetchClient<any>('/ai/generate-content', {
+        method: 'POST', body: JSON.stringify({ prompt })
+    }),
+    generateKOL: (industry: string) => fetchClient<any>('/ai/generate-kol', {
+        method: 'POST', body: JSON.stringify({ industry })
+    })
   }
 };

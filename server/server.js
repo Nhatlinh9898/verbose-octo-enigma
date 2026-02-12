@@ -10,6 +10,9 @@ const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const aiRoutes = require('./routes/aiRoutes');
+const liveStreamRoutes = require('./routes/liveStreamRoutes');
+const contentRoutes = require('./routes/contentRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 // Connect to database
 connectDB();
@@ -25,13 +28,22 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Pass io instance to req
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/livestreams', liveStreamRoutes);
+app.use('/api/content', contentRoutes);
+app.use('/api/users', userRoutes);
 
-// Socket.io logic for real-time bidding
+// Socket.io logic for real-time bidding and live streaming
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
@@ -41,7 +53,13 @@ io.on('connection', (socket) => {
     console.log(`User ${socket.id} joined room ${productId}`);
   });
 
-  // 2. Xử lý khi có người đặt giá (Bid)
+  // 2. Tham gia live stream room
+  socket.on('join_stream_room', (streamId) => {
+    socket.join(streamId);
+    console.log(`User ${socket.id} joined stream room ${streamId}`);
+  });
+
+  // 3. Xử lý khi có người đặt giá (Bid)
   socket.on('place_bid', async (data) => {
     const { productId, userId, amount } = data;
     
@@ -102,6 +120,66 @@ io.on('connection', (socket) => {
     } catch (error) {
       console.error('Bid error:', error);
       socket.emit('error', 'Lỗi khi đặt giá thầu');
+    }
+  });
+
+  // 4. Xử lý chat message trong live stream
+  socket.on('send_chat_message', async (data) => {
+    const { streamId, userId, message } = data;
+    
+    try {
+      const LiveStream = require('./models/LiveStream');
+      const User = require('./models/User');
+      
+      const stream = await LiveStream.findById(streamId);
+      const user = await User.findById(userId);
+      
+      if (!stream || !user) {
+        socket.emit('error', 'Stream hoặc user không tồn tại');
+        return;
+      }
+
+      const chatMessage = {
+        userId: userId,
+        userName: user.fullName,
+        message,
+        timestamp: new Date()
+      };
+
+      // Lưu vào DB
+      stream.chatMessages.push(chatMessage);
+      await stream.save();
+
+      // Gửi đến tất cả trong stream room
+      io.to(streamId).emit('new_chat_message', chatMessage);
+
+      console.log(`Chat message in stream ${streamId} by user ${userId}`);
+    } catch (error) {
+      console.error('Chat error:', error);
+      socket.emit('error', 'Lỗi khi gửi tin nhắn');
+    }
+  });
+
+  // 5. Cập nhật số người xem live stream
+  socket.on('update_viewer_count', async (data) => {
+    const { streamId, count } = data;
+    
+    try {
+      const LiveStream = require('./models/LiveStream');
+      
+      const stream = await LiveStream.findById(streamId);
+      if (stream) {
+        stream.viewerCount = count;
+        if (count > stream.maxViewers) {
+          stream.maxViewers = count;
+        }
+        await stream.save();
+
+        // Gửi đến tất cả trong stream room
+        io.to(streamId).emit('viewer_count_update', { count, maxViewers: stream.maxViewers });
+      }
+    } catch (error) {
+      console.error('Viewer count error:', error);
     }
   });
 
