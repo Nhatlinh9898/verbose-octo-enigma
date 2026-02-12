@@ -39,38 +39,15 @@ exports.generateKOL = async (req, res) => {
       return res.status(400).json({ message: 'Industry is required' });
     }
 
-    const prompt = `Tạo một nhân vật KOL (Key Opinion Leader) chuyên ngành ${industry} với các thông tin sau:
-    - Tên nhân vật (phải độc đáo và dễ nhớ)
-    - Tiểu sử (ngắn gọn, ấn tượng)
-    - Đặc tính tính cách (3-5 đặc điểm nổi bật)
-    - Phong cách nội dung (phong cách nói, viết content)
-    - Mục tiêu phát triển (trong 1-2 năm tới)
-    - Nền tảng phù hợp (social media platforms)
-    
-    Trả về dạng JSON với các field: name, bio, personality, contentStyle, goals, platforms`;
-
-    const genAI = new GoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY });
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-
-    // Try to parse JSON from response
-    let kolProfile;
-    try {
-      kolProfile = JSON.parse(text);
-    } catch (parseError) {
-      // If parsing fails, return raw text
-      kolProfile = {
-        name: "KOL " + industry,
-        bio: text,
-        personality: ["Creative", "Innovative", "Engaging"],
-        contentStyle: "Professional yet friendly",
-        goals: "Build community and share expertise",
-        platforms: ["Instagram", "TikTok", "YouTube"]
-      };
-    }
+    // Mock KOL data for testing without Gemini API
+    const kolProfile = {
+      name: `KOL ${industry.charAt(0).toUpperCase() + industry.slice(1)}`,
+      bio: `Chuyên gia hàng đầu trong lĩnh vực ${industry} với nhiều năm kinh nghiệm. Đam mê chia sẻ kiến thức và xây dựng cộng đồng.`,
+      personality: ["Sáng tạo", "Đam mê", "Chuyên nghiệp", "Thân thiện", "Có ảnh hưởng"],
+      contentStyle: "Chuyên nghiệp nhưng gần gũi, dễ hiểu và truyền cảm hứng",
+      goals: `Trở thành người dẫn đầu trong ngành ${industry} và xây dựng cộng đồng vững mạnh`,
+      platforms: ["Instagram", "TikTok", "YouTube", "Facebook"]
+    };
 
     res.json(kolProfile);
   } catch (error) {
