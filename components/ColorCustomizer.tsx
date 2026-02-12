@@ -121,7 +121,7 @@ const ColorCustomizer: React.FC<ColorCustomizerProps> = ({
 
   return (
     <div className="fixed inset-0 z-[600] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[95vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6">
           <div className="flex items-center justify-between">
@@ -139,7 +139,7 @@ const ColorCustomizer: React.FC<ColorCustomizerProps> = ({
           <p className="mt-2 text-blue-100">Chỉnh sửa màu nền và màu chữ để đạt độ tương phản cao nhất</p>
         </div>
 
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-6 flex-1 overflow-y-auto custom-scrollbar">
           {/* Contrast Indicator */}
           <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
             <div className="flex items-center justify-between">
