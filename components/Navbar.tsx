@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Search, ShoppingCart, User as UserIcon, MapPin, Gavel, LayoutGrid, PlusCircle, Package, Video, Sparkles, Zap, BarChart3, Shield, Bot, BrainCircuit } from 'lucide-react';
+import { Search, ShoppingCart, User as UserIcon, MapPin, Gavel, LayoutGrid, PlusCircle, Package, Video, Sparkles, Zap, BarChart3, Shield, Bot, BrainCircuit, Palette } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 interface NavbarProps {
@@ -20,11 +20,12 @@ interface NavbarProps {
   onOpenAdminDashboard: () => void;
   onOpenAvatarStudio: () => void;
   onOpenKOLStudio: () => void;
+  onOpenColorCustomizer: () => void;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ 
   cartCount, onSearch, openCart, openSellModal, openOrders, 
-  onOpenLiveStudio, onViewLiveStreams, onOpenAuth, onOpenProfile, onOpenCustomerService, onOpenContentStudio, onOpenSuperDeals, onOpenSellerDashboard, onOpenAdminDashboard, onOpenAvatarStudio, onOpenKOLStudio
+  onOpenLiveStudio, onViewLiveStreams, onOpenAuth, onOpenProfile, onOpenCustomerService, onOpenContentStudio, onOpenSuperDeals, onOpenSellerDashboard, onOpenAdminDashboard, onOpenAvatarStudio, onOpenKOLStudio, onOpenColorCustomizer
 }) => {
   const { user } = useAuth();
 
@@ -96,6 +97,9 @@ const Navbar: React.FC<NavbarProps> = ({
         </span>
         <span onClick={onOpenLiveStudio} className="flex items-center gap-1">
             <Video size={14} /> Live Studio
+        </span>
+        <span onClick={onOpenColorCustomizer} className="flex items-center gap-1 text-yellow-300">
+            <Palette size={14} /> Màu & Tương phản
         </span>
         <span onClick={onOpenCustomerService}>Hỗ trợ</span>
       </div>

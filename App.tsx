@@ -18,6 +18,7 @@ import AdminDashboard from './components/AdminDashboard';
 import KOLCreatorStudio from './components/KOLCreatorStudio';
 import VirtualAvatarStudio from './components/VirtualAvatarStudio'; // Import trực tiếp
 import CartModal from './components/CartModal';
+import ColorCustomizer from './components/ColorCustomizer';
 import { AuthProvider, useAuth } from './context/AuthContext'; 
 
 import { MOCK_PRODUCTS, MOCK_STREAMS } from './data';
@@ -49,6 +50,8 @@ const InnerApp: React.FC = () => {
   const [isAdminDashboardOpen, setIsAdminDashboardOpen] = useState(false);
   const [isAvatarStudioOpen, setIsAvatarStudioOpen] = useState(false);
   const [isKOLStudioOpen, setIsKOLStudioOpen] = useState(false);
+  const [isColorCustomizerOpen, setIsColorCustomizerOpen] = useState(false);
+  const [customColors, setCustomColors] = useState({ backgroundColor: '#ffffff', textColor: '#000000' });
 
   const [activeStream, setActiveStream] = useState<LiveStream | null>(null);
   const [isHostMode, setIsHostMode] = useState(false); 
@@ -136,6 +139,11 @@ const InnerApp: React.FC = () => {
       showNotification(`Đã xuất bản bài viết!`);
   };
 
+  const handleApplyColors = (backgroundColor: string, textColor: string) => {
+      setCustomColors({ backgroundColor, textColor });
+      showNotification('Đã áp dụng màu tùy chỉnh!');
+  };
+
   const handleCreateStream = (streamData: Partial<LiveStream>) => {
     if (!user) return;
     const newStream = { ...streamData, hostName: user.fullName, hostAvatar: user.avatar } as LiveStream;
@@ -153,7 +161,7 @@ const InnerApp: React.FC = () => {
   const superDealsProducts = useMemo(() => products.filter(p => p.type === ItemType.FIXED_PRICE && (p.originalPrice && p.originalPrice > p.price)), [products]);
 
   return (
-    <div className="min-h-screen bg-[#f3f4f6] pb-20">
+    <div className="min-h-screen pb-20" style={{ backgroundColor: customColors.backgroundColor, color: customColors.textColor }}>
       <Navbar 
         cartCount={cart.reduce((s, i) => s + i.quantity, 0)} 
         onSearch={setSearchTerm}
@@ -171,6 +179,7 @@ const InnerApp: React.FC = () => {
         onOpenAdminDashboard={() => setIsAdminDashboardOpen(true)}
         onOpenAvatarStudio={() => setIsAvatarStudioOpen(true)}
         onOpenKOLStudio={() => setIsKOLStudioOpen(true)}
+        onOpenColorCustomizer={() => setIsColorCustomizerOpen(true)}
       />
 
       <main className="max-w-[1500px] mx-auto px-4 py-6">
@@ -256,6 +265,11 @@ const InnerApp: React.FC = () => {
       <UserProfile isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} myProducts={myProducts} myPosts={contentPosts} />
       <CustomerServiceModal isOpen={isCustomerServiceOpen} onClose={() => setIsCustomerServiceOpen(false)} />
       <ContentStudioModal isOpen={isContentStudioOpen} onClose={() => setIsContentStudioOpen(false)} onSavePost={handleAddContentPost} myProducts={myProducts} />
+      <ColorCustomizer 
+        isOpen={isColorCustomizerOpen} 
+        onClose={() => setIsColorCustomizerOpen(false)} 
+        onApplyColors={handleApplyColors} 
+      />
 
       {notification && (
         <div className="fixed top-28 left-1/2 -translate-x-1/2 z-[300] bg-[#131921] text-white px-8 py-3 rounded-2xl shadow-2xl animate-in fade-in slide-in-from-top-4 border-2 border-[#febd69] flex items-center gap-3">
