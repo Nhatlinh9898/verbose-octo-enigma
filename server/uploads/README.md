@@ -14,23 +14,28 @@ uploads/
 │   │   └── [kol_id]/
 │   └── public/           # Public 3D models
 ├── thumbnails/           # Preview images
-└── textures/            # Texture files
+├── logos/              # Logo files cho avatar/KOL
+├── textures/           # Texture files
+└── animations/         # Animation files
 ```
 
 ## 📝 Hướng dẫn sử dụng
 
 1. **Upload 3D model:** Sử dụng API endpoint `/api/avatars/upload-model`
 2. **Upload thumbnail:** Sử dụng API endpoint `/api/avatars/upload-thumbnail`
-3. **Truy cập file:** Qua URL `/uploads/[path]`
+3. **Upload logo:** Sử dụng API endpoint `/api/avatars/upload-logo`
+4. **Truy cập file:** Qua URL `/uploads/[path]`
 
 ## 🔧 File formats hỗ trợ
 
 - **3D Models:** .fbx, .glb, .gltf, .obj, .dae
 - **Images:** .jpg, .jpeg, .png, .webp
+- **Logos:** .jpg, .png, .svg, .webp
 - **Textures:** .jpg, .png, .tga
 
 ## ⚠️ Lưu ý
 
 - File size limit: 50MB cho 3D models
 - File size limit: 5MB cho thumbnails
+- File size limit: 2MB cho logos
 - Tự động tạo thư mục theo user ID khi upload

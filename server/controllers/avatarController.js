@@ -1,5 +1,5 @@
 const Avatar = require('../models/Avatar');
-const { upload3DModel, uploadThumbnail } = require('../middleware/uploadMiddleware');
+const { upload3DModel, uploadThumbnail, uploadLogo } = require('../middleware/uploadMiddleware');
 const path = require('path');
 
 // @desc    Get all avatars for a user
@@ -119,6 +119,38 @@ exports.uploadThumbnail = async (req, res) => {
   }
 };
 
+// @desc    Upload logo for avatar
+// @route   POST /api/avatars/upload-logo
+exports.uploadLogo = async (req, res) => {
+  try {
+    const upload = uploadLogo.single('logo');
+    
+    upload(req, res, (err) => {
+      if (err) {
+        return res.status(400).json({ message: err.message });
+      }
+      
+      if (!req.file) {
+        return res.status(400).json({ message: 'No logo file uploaded' });
+      }
+      
+      const fileUrl = `/uploads/logos/${req.file.filename}`;
+      
+      res.json({
+        message: 'Logo uploaded successfully',
+        filename: req.file.filename,
+        originalName: req.file.originalname,
+        size: req.file.size,
+        path: fileUrl,
+        fullPath: req.file.path
+      });
+    });
+  } catch (error) {
+    console.error('Upload logo error:', error);
+    res.status(500).json({ message: 'Error uploading logo' });
+  }
+};
+
 // @desc    Create new avatar with 3D model
 // @route   POST /api/avatars
 exports.createAvatar = async (req, res) => {
@@ -133,6 +165,10 @@ exports.createAvatar = async (req, res) => {
       texturePath,
       animationPaths,
       thumbnail,
+      logo,
+      logoPosition,
+      logoSize,
+      logoOpacity,
       category,
       personality,
       greetingMessage,
@@ -164,6 +200,10 @@ exports.createAvatar = async (req, res) => {
         walking: ''
       },
       thumbnail: thumbnail || '',
+      logo: logo || '',
+      logoPosition: logoPosition || 'TOP_RIGHT',
+      logoSize: logoSize || 'SMALL',
+      logoOpacity: logoOpacity || 0.8,
       category: category || 'CUSTOM',
       personality: personality || [],
       greetingMessage: greetingMessage || 'Xin chào! Tôi là trợ lý ảo của bạn.',

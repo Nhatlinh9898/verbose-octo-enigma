@@ -46,6 +46,26 @@ const avatarSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  logo: {
+    type: String,
+    default: '' // Logo path: /uploads/logos/avatar_logo.png
+  },
+  logoPosition: {
+    type: String,
+    enum: ['TOP_LEFT', 'TOP_RIGHT', 'BOTTOM_LEFT', 'BOTTOM_RIGHT', 'CENTER'],
+    default: 'TOP_RIGHT'
+  },
+  logoSize: {
+    type: String,
+    enum: ['SMALL', 'MEDIUM', 'LARGE'],
+    default: 'SMALL'
+  },
+  logoOpacity: {
+    type: Number,
+    min: 0,
+    max: 1,
+    default: 0.8
+  },
   category: {
     type: String,
     enum: ['HUMAN', 'ROBOT', 'ANIMAL', 'FANTASY', 'CUSTOM'],

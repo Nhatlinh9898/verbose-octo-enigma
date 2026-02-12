@@ -41,7 +41,16 @@ Body:
 - thumbnail: (file) - Image file
 ```
 
-### 3. Create Avatar với 3D Model
+### 3. Upload Logo
+```http
+POST /api/avatars/upload-logo
+Content-Type: multipart/form-data
+
+Body:
+- logo: (file) - Logo image file
+```
+
+### 4. Create Avatar với 3D Model và Logo
 ```http
 POST /api/avatars
 Content-Type: application/json
@@ -61,6 +70,10 @@ Content-Type: application/json
     "walking": "/uploads/animations/walking.fbx"
   },
   "thumbnail": "/uploads/thumbnails/thumb.jpg",
+  "logo": "/uploads/logos/company_logo.png",
+  "logoPosition": "TOP_RIGHT",
+  "logoSize": "SMALL",
+  "logoOpacity": 0.8,
   "category": "HUMAN",
   "personality": ["friendly", "professional"],
   "greetingMessage": "Xin chào!",
@@ -89,6 +102,11 @@ Content-Type: application/json
 ### Thumbnails:
 - **JPG/PNG/WebP** - Preview images
 
+### Logos:
+- **JPG/PNG** - Company/brand logos
+- **SVG** - Vector logos (recommended)
+- **WebP** - Modern web format
+
 ## 🔧 Cài Đặt
 
 1. **Cài đặt dependencies:**
@@ -104,13 +122,27 @@ npm run dev
 
 3. **Upload file 3D:**
 ```javascript
-// Sử dụng FormData để upload
+// Sử dụng FormData để upload 3D model
 const formData = new FormData();
 formData.append('model', file3D);
 formData.append('type', 'avatar');
 formData.append('userId', 'user123');
 
 fetch('/api/avatars/upload-model', {
+  method: 'POST',
+  body: formData
+})
+.then(response => response.json())
+.then(data => console.log(data));
+```
+
+4. **Upload logo:**
+```javascript
+// Upload logo cho avatar
+const formData = new FormData();
+formData.append('logo', logoFile);
+
+fetch('/api/avatars/upload-logo', {
   method: 'POST',
   body: formData
 })
@@ -127,6 +159,7 @@ import React, { useState } from 'react';
 const Avatar3DUpload = () => {
   const [modelFile, setModelFile] = useState(null);
   const [thumbnailFile, setThumbnailFile] = useState(null);
+  const [logoFile, setLogoFile] = useState(null);
 
   const handleModelUpload = async (e) => {
     const file = e.target.files[0];
@@ -150,6 +183,26 @@ const Avatar3DUpload = () => {
     }
   };
 
+  const handleLogoUpload = async (e) => {
+    const file = e.target.files[0];
+    setLogoFile(file);
+    
+    const formData = new FormData();
+    formData.append('logo', file);
+    
+    try {
+      const response = await fetch('/api/avatars/upload-logo', {
+        method: 'POST',
+        body: formData
+      });
+      
+      const data = await response.json();
+      console.log('Logo uploaded:', data);
+    } catch (error) {
+      console.error('Logo upload error:', error);
+    }
+  };
+
   return (
     <div>
       <h3>Upload 3D Avatar</h3>
@@ -157,6 +210,13 @@ const Avatar3DUpload = () => {
         type="file" 
         accept=".fbx,.glb,.gltf,.obj,.dae"
         onChange={handleModelUpload}
+      />
+      
+      <h3>Upload Logo</h3>
+      <input 
+        type="file" 
+        accept=".jpg,.jpeg,.png,.svg,.webp"
+        onChange={handleLogoUpload}
       />
     </div>
   );

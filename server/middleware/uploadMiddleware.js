@@ -9,7 +9,9 @@ const createUploadDirs = () => {
     'uploads/3d-models/kol',
     'uploads/3d-models/public',
     'uploads/thumbnails',
-    'uploads/textures'
+    'uploads/textures',
+    'uploads/logos',
+    'uploads/animations'
   ];
   
   dirs.forEach(dir => {
@@ -100,8 +102,40 @@ const uploadThumbnail = multer({
   }
 });
 
+// Upload logo
+const uploadLogo = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      const uploadPath = path.join(__dirname, '..', 'uploads/logos');
+      if (!fs.existsSync(uploadPath)) {
+        fs.mkdirSync(uploadPath, { recursive: true });
+      }
+      cb(null, uploadPath);
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      const ext = path.extname(file.originalname);
+      cb(null, 'logo-' + uniqueSuffix + ext);
+    }
+  }),
+  limits: {
+    fileSize: 2 * 1024 * 1024 // 2MB limit for logos
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ['.jpg', '.jpeg', '.png', '.svg', '.webp'];
+    const ext = path.extname(file.originalname).toLowerCase();
+    
+    if (allowedTypes.includes(ext)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid logo type. Only JPG, PNG, SVG, WebP are allowed.'), false);
+    }
+  }
+});
+
 module.exports = {
   upload3DModel,
   uploadThumbnail,
+  uploadLogo,
   createUploadDirs
 };
