@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Palette, Eye, EyeOff, RefreshCw, Check, Contrast } from 'lucide-react';
+import { Palette, Eye, EyeOff, RefreshCw, Check, Contrast, Sliders } from 'lucide-react';
 
 interface ColorCustomizerProps {
   isOpen: boolean;
@@ -15,6 +15,7 @@ const ColorCustomizer: React.FC<ColorCustomizerProps> = ({
   const [backgroundColor, setBackgroundColor] = useState('#ffffff');
   const [textColor, setTextColor] = useState('#000000');
   const [showPreview, setShowPreview] = useState(true);
+  const [intensity, setIntensity] = useState(100); // New intensity slider
   
   // High contrast presets
   const highContrastPresets = [
@@ -69,7 +70,7 @@ const ColorCustomizer: React.FC<ColorCustomizerProps> = ({
   };
 
   const handleApply = () => {
-    onApplyColors(backgroundColor, textColor);
+    onApplyColors(adjustedBgColor, adjustedTextColor);
     onClose();
   };
 
@@ -86,6 +87,35 @@ const ColorCustomizer: React.FC<ColorCustomizerProps> = ({
       setTextColor(bgLum > textLum ? '#ffffff' : '#000000');
     }
   };
+
+  // Adjust color intensity based on slider
+  const adjustColorIntensity = (color: string, intensityLevel: number): string => {
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    
+    // Adjust intensity: 0 = darkest, 100 = original, 200 = lightest
+    let factor = intensityLevel / 100;
+    if (intensityLevel < 100) {
+      // Darken colors
+      factor = intensityLevel / 100;
+    } else {
+      // Lighten colors
+      factor = 1 + (intensityLevel - 100) / 100;
+    }
+    
+    const newR = Math.min(255, Math.max(0, Math.round(r * factor)));
+    const newG = Math.min(255, Math.max(0, Math.round(g * factor)));
+    const newB = Math.min(255, Math.max(0, Math.round(b * factor)));
+    
+    return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+  };
+
+  // Get adjusted colors for preview
+  const adjustedBgColor = adjustColorIntensity(backgroundColor, intensity);
+  const adjustedTextColor = adjustColorIntensity(textColor, intensity);
+  const adjustedContrastRatio = calculateContrast(adjustedBgColor, adjustedTextColor);
 
   if (!isOpen) return null;
 
@@ -117,12 +147,35 @@ const ColorCustomizer: React.FC<ColorCustomizerProps> = ({
                 <Contrast size={20} className="text-gray-600" />
                 <div>
                   <p className="font-semibold">Tỷ lệ tương phản</p>
-                  <p className="text-sm text-gray-600">Hiện tại: {contrastRatio.toFixed(2)}:1</p>
+                  <p className="text-sm text-gray-600">Hiện tại: {adjustedContrastRatio.toFixed(2)}:1</p>
                 </div>
               </div>
               <div className="text-right">
                 <p className={`font-bold ${wcagInfo.color}`}>{wcagInfo.level}</p>
                 <p className="text-xs text-gray-500">Tiêu chuẩn WCAG 2.1</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Intensity Slider */}
+          <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+            <div className="flex items-center gap-3 mb-3">
+              <Sliders size={20} className="text-gray-600" />
+              <label className="font-semibold">Độ đậm/nhạt màu</label>
+            </div>
+            <div className="space-y-2">
+              <input
+                type="range"
+                min="0"
+                max="200"
+                value={intensity}
+                onChange={(e) => setIntensity(Number(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+              />
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>Tối nhất</span>
+                <span className="font-bold text-gray-700">{intensity}%</span>
+                <span>Nhất</span>
               </div>
             </div>
           </div>
@@ -187,7 +240,7 @@ const ColorCustomizer: React.FC<ColorCustomizerProps> = ({
             {showPreview && (
               <div 
                 className="rounded-xl p-6 border-2 border-gray-300"
-                style={{ backgroundColor, color: textColor }}
+                style={{ backgroundColor: adjustedBgColor, color: adjustedTextColor }}
               >
                 <h3 className="text-xl font-bold mb-2">Văn bản mẫu Tiêu đề</h3>
                 <p className="mb-3">Đây là đoạn văn bản mẫu để kiểm tra độ tương phản giữa màu nền và màu chữ. Bạn có thể đọc dễ dàng không?</p>
@@ -195,9 +248,9 @@ const ColorCustomizer: React.FC<ColorCustomizerProps> = ({
                   <button 
                     className="px-4 py-2 rounded border font-medium"
                     style={{ 
-                      backgroundColor: textColor, 
-                      color: backgroundColor,
-                      borderColor: textColor 
+                      backgroundColor: adjustedTextColor, 
+                      color: adjustedBgColor,
+                      borderColor: adjustedTextColor 
                     }}
                   >
                     Nút bấm
