@@ -60,17 +60,49 @@ const LogoComponent: React.FC<LogoComponentProps> = ({ logoUrl }) => {
   // Ensure logos are fetched on mount
   useEffect(() => {
     if (logoList.length === 0 && !logoUrl) {
-      console.log('No logos available, fetching...');
-      fetchLogos();
+      console.log('No logos available, fetching ALL logos...');
+      fetchAllLogos();
     }
   }, []);
+
+  const fetchAllLogos = async () => {
+    try {
+      console.log('Fetching ALL logos from API...');
+      const response = await fetch('http://localhost:5000/api/logos');
+      const data = await response.json();
+      
+      console.log('All logos API response:', data);
+      
+      if (data.logos && data.logos.length > 0) {
+        setLogoList(data.logos);
+        console.log('All logos loaded:', data.logos.length);
+        // Set first logo as current if no current logo
+        if (!currentLogo) {
+          setCurrentLogo(data.logos[0]);
+          console.log('Set initial logo:', data.logos[0].name);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching all logos:', error);
+      // Fallback to a default logo
+      const fallbackLogo = {
+        filename: '1.jpg',
+        name: '1',
+        url: 'http://localhost:5000/uploads/logos/1.jpg'
+      };
+      setLogoList([fallbackLogo]);
+      setCurrentLogo(fallbackLogo);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const fetchLogos = async () => {
     try {
       setIsLoading(true);
       console.log('Fetching logos from API...');
-      // Fetch random logos to get some options
-      const response = await fetch('http://localhost:5000/api/logos/random/10');
+      // Fetch more logos for better variety
+      const response = await fetch('http://localhost:5000/api/logos/random/50');
       const data = await response.json();
       
       console.log('API response:', data);
@@ -143,23 +175,20 @@ const LogoComponent: React.FC<LogoComponentProps> = ({ logoUrl }) => {
 
   return (
     <div className="flex items-center">
-      <div className="relative">
+      <div className="relative group">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-600 rounded-lg opacity-0 group-hover:opacity-20 blur-sm transition-all duration-300 -z-10"></div>
         <img 
           key={logoUpdateKey} // Force re-render when logo changes
           src={currentLogo.url} 
           alt="AmazeBid Logo" 
-          className="w-8 h-8 md:w-10 md:h-10 rounded-lg object-cover mr-2 hover:opacity-80 transition-opacity"
+          className="w-8 h-8 md:w-10 md:h-10 rounded-lg object-cover mr-2 relative z-20 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 hover:rotate-3"
           onError={handleImageError}
           title={`Auto-change: ${autoChange ? 'ON (1m)' : 'OFF'}`}
         />
-        {/* Auto-change indicator - hidden */}
-        {/* {autoChange && (
-          <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse" title="Auto-change enabled (1m)" />
-        )} */}
-        {/* Logo name display for debugging - hidden */}
-        {/* <div className="absolute -bottom-6 left-0 text-xs text-white bg-black bg-opacity-75 px-1 rounded">
-          {currentLogo?.name || 'Loading...'}
-        </div> */}
+        {/* Subtle glow effect */}
+        <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-30">
+          <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg blur-md group-hover:blur-lg transition-all duration-300"></div>
+        </div>
       </div>
     </div>
   );
