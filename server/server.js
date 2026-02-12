@@ -34,6 +34,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Serve static files for uploaded 3D models and thumbnails
+app.use('/uploads', express.static('uploads'));
+
 // Pass io instance to req
 app.use((req, res, next) => {
   req.io = io;

@@ -16,7 +16,31 @@ const avatarSchema = new mongoose.Schema({
   },
   modelId: {
     type: String,
-    required: true // Sketchfab 3D model ID
+    required: true // Sketchfab 3D model ID or local file path
+  },
+  modelType: {
+    type: String,
+    enum: ['SKETCHFAB', 'LOCAL_FILE', 'CUSTOM_URL'],
+    default: 'LOCAL_FILE'
+  },
+  modelPath: {
+    type: String,
+    default: '' // Local file path: /uploads/3d-models/avatars/user_id/model.fbx
+  },
+  modelFormat: {
+    type: String,
+    enum: ['FBX', 'GLB', 'GLTF', 'OBJ', 'DAE'],
+    default: 'FBX'
+  },
+  texturePath: {
+    type: String,
+    default: ''
+  },
+  animationPaths: {
+    idle: { type: String, default: '' },
+    talking: { type: String, default: '' },
+    greeting: { type: String, default: '' },
+    walking: { type: String, default: '' }
   },
   thumbnail: {
     type: String,

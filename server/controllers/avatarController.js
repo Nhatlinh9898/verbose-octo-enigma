@@ -1,4 +1,6 @@
 const Avatar = require('../models/Avatar');
+const { upload3DModel, uploadThumbnail } = require('../middleware/uploadMiddleware');
+const path = require('path');
 
 // @desc    Get all avatars for a user
 // @route   GET /api/avatars
@@ -53,7 +55,71 @@ exports.getAvatarById = async (req, res) => {
   }
 };
 
-// @desc    Create new avatar
+// @desc    Upload 3D model for avatar
+// @route   POST /api/avatars/upload-model
+exports.upload3DModel = async (req, res) => {
+  try {
+    const upload = upload3DModel.single('model');
+    
+    upload(req, res, (err) => {
+      if (err) {
+        return res.status(400).json({ message: err.message });
+      }
+      
+      if (!req.file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+      }
+      
+      const fileUrl = `/uploads/3d-models/${req.body.type || 'public'}/${req.body.userId || 'anonymous'}/${req.file.filename}`;
+      
+      res.json({
+        message: '3D model uploaded successfully',
+        filename: req.file.filename,
+        originalName: req.file.originalname,
+        size: req.file.size,
+        path: fileUrl,
+        fullPath: req.file.path
+      });
+    });
+  } catch (error) {
+    console.error('Upload 3D model error:', error);
+    res.status(500).json({ message: 'Error uploading 3D model' });
+  }
+};
+
+// @desc    Upload thumbnail for avatar
+// @route   POST /api/avatars/upload-thumbnail
+exports.uploadThumbnail = async (req, res) => {
+  try {
+    const upload = uploadThumbnail.single('thumbnail');
+    
+    upload(req, res, (err) => {
+      if (err) {
+        return res.status(400).json({ message: err.message });
+      }
+      
+      if (!req.file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+      }
+      
+      const fileUrl = `/uploads/thumbnails/${req.file.filename}`;
+      
+      res.json({
+        message: 'Thumbnail uploaded successfully',
+        filename: req.file.filename,
+        originalName: req.file.originalname,
+        size: req.file.size,
+        path: fileUrl,
+        fullPath: req.file.path
+      });
+    });
+  } catch (error) {
+    console.error('Upload thumbnail error:', error);
+    res.status(500).json({ message: 'Error uploading thumbnail' });
+  }
+};
+
+// @desc    Create new avatar with 3D model
 // @route   POST /api/avatars
 exports.createAvatar = async (req, res) => {
   try {
@@ -61,6 +127,11 @@ exports.createAvatar = async (req, res) => {
       name,
       description,
       modelId,
+      modelType,
+      modelPath,
+      modelFormat,
+      texturePath,
+      animationPaths,
       thumbnail,
       category,
       personality,
@@ -82,6 +153,16 @@ exports.createAvatar = async (req, res) => {
       name,
       description: description || '',
       modelId,
+      modelType: modelType || 'LOCAL_FILE',
+      modelPath: modelPath || '',
+      modelFormat: modelFormat || 'FBX',
+      texturePath: texturePath || '',
+      animationPaths: animationPaths || {
+        idle: '',
+        talking: '',
+        greeting: '',
+        walking: ''
+      },
       thumbnail: thumbnail || '',
       category: category || 'CUSTOM',
       personality: personality || [],

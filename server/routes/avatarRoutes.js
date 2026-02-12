@@ -9,6 +9,8 @@ router.get('/categories', avatarController.getCategories);
 router.get('/popular', avatarController.getPopularAvatars);
 
 // Protected routes - temporarily remove auth for testing
+router.post('/upload-model', avatarController.upload3DModel);
+router.post('/upload-thumbnail', avatarController.uploadThumbnail);
 router.get('/', avatarController.getAvatars);
 router.get('/:id', avatarController.getAvatarById);
 router.post('/', avatarController.createAvatar);
