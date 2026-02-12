@@ -20,7 +20,7 @@ const LogoComponent: React.FC<LogoComponentProps> = ({ logoUrl }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [autoChange, setAutoChange] = useState(true); // Auto-change enabled by default
-  const [changeInterval, setChangeInterval] = useState(2000); // Change every 2 seconds
+  const [changeInterval, setChangeInterval] = useState(60000); // Change every 1 minute (60 seconds)
   const [logoUpdateKey, setLogoUpdateKey] = useState(0); // Force re-render
 
   useEffect(() => {
@@ -148,23 +148,18 @@ const LogoComponent: React.FC<LogoComponentProps> = ({ logoUrl }) => {
           key={logoUpdateKey} // Force re-render when logo changes
           src={currentLogo.url} 
           alt="AmazeBid Logo" 
-          className="w-8 h-8 md:w-10 md:h-10 rounded-lg object-cover mr-2 cursor-pointer hover:opacity-80 transition-opacity"
-          onClick={changeLogo}
+          className="w-8 h-8 md:w-10 md:h-10 rounded-lg object-cover mr-2 hover:opacity-80 transition-opacity"
           onError={handleImageError}
-          title={`Click to change logo | Auto-change: ${autoChange ? 'ON (2s)' : 'OFF'}`}
+          title={`Auto-change: ${autoChange ? 'ON (1m)' : 'OFF'}`}
         />
-        {autoChange && (
-          <>
-            <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse" title="Auto-change enabled (2s)" />
-            <div className="absolute -bottom-1 -right-1 text-xs text-green-400 font-bold" title="Auto-change enabled">
-              AUTO
-            </div>
-          </>
-        )}
-        {/* Logo name display for debugging */}
-        <div className="absolute -bottom-6 left-0 text-xs text-white bg-black bg-opacity-75 px-1 rounded">
+        {/* Auto-change indicator - hidden */}
+        {/* {autoChange && (
+          <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse" title="Auto-change enabled (1m)" />
+        )} */}
+        {/* Logo name display for debugging - hidden */}
+        {/* <div className="absolute -bottom-6 left-0 text-xs text-white bg-black bg-opacity-75 px-1 rounded">
           {currentLogo?.name || 'Loading...'}
-        </div>
+        </div> */}
       </div>
     </div>
   );
